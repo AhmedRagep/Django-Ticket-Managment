@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block body %}
+  <h1 style="text-align: center;"><strong>Workspace</strong></h1>
+  <div style="margin-top: 5%;">
+    <div class="container">
+      
+      {% comment %} <p>The .table class adds basic styling (light padding and only horizontal dividers) to a table:</p>             {% endcomment %}
+      <table class="table table-bordered table-hover" style="width: 85%;margin-left: 8%;">
+        <thead>
+          <tr>
+            <th scope="col">Ticket ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Created On</th>
+            <th scope="col">Created By</th>
+            <th scope="col">Status</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ticket in tickets %}
+          <tr>
+            <td>{{ticket.tieckt_number}}</td>
+            <td>{{ticket.title}}</td>
+            <td>{{ticket.date_created}}</td>
+            <td>{{ticket.created_by|capfirst}}</td>
+            
+            {% if ticket.ticket_status == 'Active' %}
+              <td><span class="badge bg-succses">Active</span></td>
+            {% elif ticket.ticket_status == 'Pending' %}
+              <td><span class="badge bg-wroning">Pending</span></td>
+            {% elif ticket.ticket_status == 'Completed' %}
+              <td><span class="badge bg-danger">Completed</span></td>
+            {% endif %}
+            <td><a href="{% url 'ticket_detial' ticket.pk %}">View Detial</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock body %}

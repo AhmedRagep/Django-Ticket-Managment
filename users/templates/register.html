@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block body %}
+
+<h1 style="text-align: center;"><strong>Register</strong></h1>
+<div style="width: 50%;margin-top: 5%;text-align: center;margin-left: 25%;">
+  
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="email">Email:</label>
+      {% render_field form.email class="form-control" %}
+    </div>
+    <div class="form-group">
+      <label for="username">Username:</label>
+      {% render_field form.username class="form-control" %}
+    </div>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      {% render_field form.password1 class="form-control" %}
+    </div>
+    <div class="form-group">
+      <label for="confirm">Confirm Password:</label>
+      {% render_field form.password2 class="form-control" %}
+    </div>
+    <button type="submit" class="btn btn-success">Submit</button>
+  </form>
+</div>
+
+{% endblock body %}

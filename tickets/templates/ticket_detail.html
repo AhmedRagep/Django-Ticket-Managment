@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% block style %}
+<style>
+  .card {
+    position: relative;
+    /* display: flex;
+    align-items: center; */
+    justify-content: center;
+    width: 545px;
+    height: 505px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 32px;
+    overflow: hidden;
+    border-radius: 10px;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    color: #000000;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+  }
+
+  .content .heading {
+    font-weight: 700;
+    font-size: 32px;
+  }
+
+  .content .para {
+    line-height: 1.5;
+  }
+
+  .content .btn {
+    color: #e8e8e8;
+    text-decoration: none;
+    padding: 10px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(-45deg, #f0d5b4 0%, #383536 100%);
+    border-radius: 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(-45deg, #e9d9c5 0%, #363435 100%);
+    z-index: -1;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+  }
+
+  .card:hover::before {
+    width: 100%;
+  }
+
+  .card:hover {
+    box-shadow: none;
+  }
+
+  .card:hover .btn {
+    color: #212121;
+    background: #e8e8e8;
+  }
+
+  .content .btn:hover {
+    outline: 2px solid #e8e8e8;
+    background: transparent;
+    color: #e8e8e8;
+  }
+
+  .content .btn:active {
+    box-shadow: none;
+  }
+
+  .b {
+    display: inline;
+  }
+</style>
+{% endblock style %}
+{% block body %}
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="content">
+        <p class="heading">{{ticket.title}}
+        </p>
+        <p class="para"><strong>Ticket Number: </strong>{{ticket.tieckt_number}}</p>
+        <p><strong>Description: </strong>{{ticket.description}}</p>
+        <b><strong>Date Created: </strong>{{ticket.date_created}}</b>
+        <b><strong>Assigned To: </strong>{{ticket.assigned_to|capfirst}}</b>
+        {% if ticket.resolved %}
+          <b><strong>Resolved? </strong> <span class="badge bg-danger">Yes, Resolved</span></b>
+        {% else %}
+          <b><strong>Resolved? </strong> <span class="badge bg-succses">Not, Yet</span></b>
+        {% endif %}
+        <b><strong>Created By: </strong>{{ticket.created_by|capfirst}}</b>
+        <b><strong>Accepted Data: </strong>{{ticket.accepted_date}}</b>
+        {% if ticket.ticket_status == 'Active' %}
+          <b><strong>Ticket Status: </strong><span class="badge bg-succses">Active</span></b>
+        {% elif ticket.ticket_status == 'Pending' %}
+          <b><strong>Ticket Status: </strong><span class="badge bg-wroning">Pending</span></b>
+        {% elif ticket.ticket_status == 'Completed' %}
+          <b><strong>Ticket Status: </strong><span class="badge bg-danger">Completed</span></b>
+        {% endif %}
+
+
+        {% if request.user.enginear and not ticket.resolved %}
+          <a href="" class="btn" data-toggle="modal" data-target="#myModal">Confirm Resoluion</a>
+        {% endif %}
+        {% if request.user.customer and not ticket.resolved %}
+          <a href="{% url 'update_ticket' ticket.pk %}" class="btn">Update Ticket</a>
+        {% endif %}
+
+        <!-- Modal -->
+        <div id="myModal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Close Ticket</h4>
+              </div>
+              <div class="modal-body">
+                <p>Do You Want Close The Ticket Out?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <a href="{% url 'closed_ticket' ticket.pk %}" class="btn" style="background-color: aqua;">Save Close</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+
+        <!-- <button class="btn">Read more</button> -->
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="content">
+        <p class="heading">All Tickets Created By: {{ticket.created_by}}
+        </p>
+        
+          {% for ticket in tickets_per_user %}
+            <!-- عرض التكت اللي باسم اليوزر -->
+            {% if ticket.ticket_status == 'Active' %}
+              <b>{{ticket.tieckt_number}} : <span class="badge bg-succses">Active</span> <a href="{% url 'ticket_detial' ticket.pk %}">(View)</a></b>
+            {% elif ticket.ticket_status == 'Pending' %}
+              <b>{{ticket.tieckt_number}} : <span class="badge bg-wroning">Pending</span> <a href="{% url 'ticket_detial' ticket.pk %}">(View)</a></b>
+            {% elif ticket.ticket_status == 'Completed' %}
+              <b>{{ticket.tieckt_number}} : <span class="badge bg-danger">Completed</span> <a href="{% url 'ticket_detial' ticket.pk %}">(View)</a></b>
+            {% endif %}
+          {% endfor %}
+        
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock body %}
